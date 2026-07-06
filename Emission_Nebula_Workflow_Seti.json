@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "name": "Chuck Faranda Professional Emission Nebula Workflow",
+  "description": "Optimized for H\u03b1, OIII and SII emission nebulae using OSC dual-band or mono narrowband data.",
+  "lanes": [
+    "main"
+  ],
+  "steps": [
+    {
+      "id": "7c95fcfc4e66",
+      "command_id": "crop",
+      "note": "Crop only stacking artifacts; preserve faint outer emission.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "12cb2cc7c1c7",
+      "command_id": "pedestal",
+      "note": "Remove pedestal without clipping faint nebulosity.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ec4d8e5bd4de",
+      "command_id": "abe",
+      "note": "Preferred: AutoBGE. Alternatives: GraXpert AI or VeraLux Nox. Preserve faint hydrogen signal.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a4e93e23120e",
+      "command_id": "background_neutral",
+      "note": "Neutralize background after gradient removal; verify no color cast remains.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "5b90c9c2b381",
+      "command_id": "white_balance",
+      "note": "Preferred: SPCC. Maintain realistic H\u03b1/OIII balance.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "d7867da65bd6",
+      "command_id": "cosmicclarity",
+      "note": "Preferred: BlurXTerminator (15\u201325%) then NoiseXTerminator (light). StarXTerminator is recommended for separate nebula processing when appropriate. Alternatives: SyQon Parallax and SyQon Prism.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "1d4b80d613c7",
+      "command_id": "stat_stretch",
+      "note": "Use Generalized Hyperbolic Stretch for most data; Statistical Stretch for extremely faint emission.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a8fec2325fb2",
+      "command_id": "curves",
+      "note": "Enhance contrast conservatively while protecting faint outer nebulosity.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ad24ed726baf",
+      "command_id": "clahe",
+      "note": "Optional; apply only to enhance filament detail.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "3345f9d23733",
+      "command_id": "save_as",
+      "note": "Archive a 16-bit TIFF master before exports.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "workflow_id": "CFPW-102",
+  "author": "Chuck Faranda"
+}

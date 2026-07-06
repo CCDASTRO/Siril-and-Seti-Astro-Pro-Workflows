@@ -1,0 +1,113 @@
+{
+  "schema_version": 2,
+  "name": "Chuck Faranda Professional Galaxy Workflow",
+  "description": "Broadband galaxy workflow optimized for preserving dust lanes, natural star colors, and fine spiral detail.",
+  "lanes": [
+    "main"
+  ],
+  "steps": [
+    {
+      "id": "7c95fcfc4e66",
+      "command_id": "crop",
+      "note": "Crop only stacking artifacts. Preserve galaxy halo and tidal streams whenever possible.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "12cb2cc7c1c7",
+      "command_id": "pedestal",
+      "note": "Remove pedestal without clipping the black point.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ec4d8e5bd4de",
+      "command_id": "abe",
+      "note": "Preferred: AutoBGE. Alternatives: GraXpert AI or VeraLux Nox. Use conservative settings to preserve faint galaxy halos and IFN.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a4e93e23120e",
+      "command_id": "background_neutral",
+      "note": "Neutralize background after gradient removal. Verify background remains neutral.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "5b90c9c2b381",
+      "command_id": "white_balance",
+      "note": "Preferred: SPCC. Confirm realistic stellar populations and galaxy core color.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "d7867da65bd6",
+      "command_id": "cosmicclarity",
+      "note": "Preferred: BlurXTerminator (moderate, ~20\u201330%), then NoiseXTerminator (light). StarXTerminator is optional. Alternatives: SyQon Parallax and SyQon Prism.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "1d4b80d613c7",
+      "command_id": "stat_stretch",
+      "note": "Preferred: Generalized Hyperbolic Stretch. Stretch gradually to protect bright galaxy cores.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a8fec2325fb2",
+      "command_id": "curves",
+      "note": "Increase contrast gently. Avoid oversaturating the core or clipping faint outer arms.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ad24ed726baf",
+      "command_id": "clahe",
+      "note": "Optional. Use lightly to enhance dust lanes only.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "3345f9d23733",
+      "command_id": "save_as",
+      "note": "Archive a 16-bit TIFF before producing web images.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "author": "Chuck Faranda",
+  "workflow_id": "CFPW-101",
+  "target": "Galaxy"
+}

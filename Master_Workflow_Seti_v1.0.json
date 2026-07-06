@@ -1,0 +1,129 @@
+{
+  "schema_version": 2,
+  "name": "Chuck Faranda Professional Master Workflow",
+  "description": "Second Edition publication workflow accompanying 'The Complete Siril & Seti Astro Suite Pro Processing Companion'. Designed for OSC and Mono data with emphasis on preserving signal, using AI tools judiciously, and validating each processing stage.",
+  "lanes": [
+    "main"
+  ],
+  "steps": [
+    {
+      "id": "7c95fcfc4e66",
+      "command_id": "crop",
+      "note": "Crop stacking artifacts. Preserve all valid astronomical signal. Inspect all four edges before proceeding.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "12cb2cc7c1c7",
+      "command_id": "pedestal",
+      "note": "Remove the pedestal without clipping the histogram. Verify the black point remains intact.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ec4d8e5bd4de",
+      "command_id": "abe",
+      "note": "Preferred: AutoBGE. Alternatives: GraXpert AI, VeraLux Nox, Manual Background Extraction. Preserve IFN and faint dust; avoid over-correction.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a4e93e23120e",
+      "command_id": "background_neutral",
+      "note": "Neutralize the background after gradient removal. Prefer SPCC/PCC workflow when appropriate. Verify the background remains free of color casts.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "5b90c9c2b381",
+      "command_id": "white_balance",
+      "note": "Perform photometric color calibration (SPCC preferred, PCC second). Confirm natural stellar colors before stretching.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "d7867da65bd6",
+      "command_id": "cosmicclarity",
+      "note": "Preferred sequence: BlurXTerminator (RC-Astro) \u2192 NoiseXTerminator (RC-Astro). Optional: StarXTerminator after denoising when beneficial. Alternatives: SyQon Parallax, SyQon Prism, Native tools. Inspect at 100% for halos, ringing, and loss of faint detail.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "1d4b80d613c7",
+      "command_id": "stat_stretch",
+      "note": "Preferred: Generalized Hyperbolic Stretch. Use Statistical Stretch for IFN and extremely faint dust. Apply multiple gentle stretches instead of one aggressive stretch.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a8fec2325fb2",
+      "command_id": "curves",
+      "note": "Use conservative curves to refine contrast and color while preserving star color and faint structures. Compare frequently with the original.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ad24ed726baf",
+      "command_id": "clahe",
+      "note": "Optional local contrast enhancement. Use sparingly to avoid exaggerated texture or noise.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "3345f9d23733",
+      "command_id": "save_as",
+      "note": "Save a 16-bit TIFF master before producing JPEG or other delivery formats.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "author": "Chuck Faranda",
+  "library": "Chuck Faranda Professional Workflow Library",
+  "edition": "Second Edition",
+  "workflow_version": "1.0",
+  "book": "The Complete Siril & Seti Astro Suite Pro Processing Companion",
+  "recommended_profiles": [
+    "Standard",
+    "Premium",
+    "Scientific"
+  ],
+  "validation_checklist": [
+    "Histogram not clipped",
+    "Background neutral",
+    "Natural star colors",
+    "No sharpening halos",
+    "Faint dust preserved",
+    "Inspect at Fit and 100%",
+    "Archive 16-bit TIFF master"
+  ]
+}

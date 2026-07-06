@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "name": "Chuck Faranda Professional Reflection Nebula Workflow",
+  "description": "Optimized for broadband reflection nebulae with emphasis on preserving delicate blue dust and subtle gradients.",
+  "lanes": [
+    "main"
+  ],
+  "steps": [
+    {
+      "id": "7c95fcfc4e66",
+      "command_id": "crop",
+      "note": "Crop only stacking artifacts; preserve faint reflection halos.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "12cb2cc7c1c7",
+      "command_id": "pedestal",
+      "note": "Remove pedestal carefully without clipping faint dust.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ec4d8e5bd4de",
+      "command_id": "abe",
+      "note": "Preferred: AutoBGE. Alternatives: GraXpert AI or VeraLux Nox. Use conservative settings to preserve blue reflection dust and IFN.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a4e93e23120e",
+      "command_id": "background_neutral",
+      "note": "Neutralize the background while preserving natural blue reflection tones.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "5b90c9c2b381",
+      "command_id": "white_balance",
+      "note": "Preferred: SPCC. Verify neutral stars and accurate blue reflection color.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "d7867da65bd6",
+      "command_id": "cosmicclarity",
+      "note": "Preferred: BlurXTerminator (10\u201320%) followed by NoiseXTerminator (very light). StarXTerminator is optional and generally not recommended unless processing stars separately. Alternatives: SyQon Parallax and SyQon Prism.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "1d4b80d613c7",
+      "command_id": "stat_stretch",
+      "note": "Preferred: Generalized Hyperbolic Stretch with small incremental stretches. Statistical Stretch for extremely faint dust.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a8fec2325fb2",
+      "command_id": "curves",
+      "note": "Increase contrast gently; avoid oversaturating blue dust or clipping faint reflection.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ad24ed726baf",
+      "command_id": "clahe",
+      "note": "Optional and minimal. Enhance texture only if it remains natural.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "3345f9d23733",
+      "command_id": "save_as",
+      "note": "Archive a 16-bit TIFF master before export.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "workflow_id": "CFPW-103",
+  "author": "Chuck Faranda"
+}

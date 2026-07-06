@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "name": "Chuck Faranda Professional Dark Nebula Workflow",
+  "description": "Optimized for dark nebulae and integrated flux nebula (IFN), emphasizing preservation of faint dust and absorption lanes.",
+  "lanes": [
+    "main"
+  ],
+  "steps": [
+    {
+      "id": "7c95fcfc4e66",
+      "command_id": "crop",
+      "note": "Crop only stacking artifacts. Preserve all faint dust structures.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "12cb2cc7c1c7",
+      "command_id": "pedestal",
+      "note": "Remove pedestal conservatively; never clip the black point.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ec4d8e5bd4de",
+      "command_id": "abe",
+      "note": "Preferred: AutoBGE with conservative settings. Alternatives: GraXpert AI or VeraLux Nox. Avoid removing IFN or absorption features.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a4e93e23120e",
+      "command_id": "background_neutral",
+      "note": "Neutralize background carefully while preserving subtle dust gradients.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "5b90c9c2b381",
+      "command_id": "white_balance",
+      "note": "Preferred: SPCC. Preserve natural broadband dust colors.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "d7867da65bd6",
+      "command_id": "cosmicclarity",
+      "note": "Preferred: BlurXTerminator (0\u201310%, optional) then NoiseXTerminator (minimal). SyQon Prism is the preferred alternative for preserving faint dust. StarXTerminator is generally NOT recommended.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "1d4b80d613c7",
+      "command_id": "stat_stretch",
+      "note": "Preferred: Statistical Stretch for IFN and faint dust. GHS may be used with very gentle increments.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "a8fec2325fb2",
+      "command_id": "curves",
+      "note": "Apply only subtle contrast adjustments. Do not crush the background.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "ad24ed726baf",
+      "command_id": "clahe",
+      "note": "Generally avoid. If used, apply minimally to localized structures.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "3345f9d23733",
+      "command_id": "save_as",
+      "note": "Archive a 16-bit TIFF master before export.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    }
+  ],
+  "workflow_id": "CFPW-104",
+  "author": "Chuck Faranda"
+}
