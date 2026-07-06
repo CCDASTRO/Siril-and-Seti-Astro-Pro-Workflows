@@ -6,7 +6,7 @@ The **Workflow Library** is the companion workflow collection for **Siril & Seti
 
 This repository contains professionally developed workflow files, documentation, and reference material for deep-sky astrophotography using **Seti Astro Suite Pro** and the **Siril Workflow Assistant**.
 
-The workflows reflect more than 60 years of practical astrophotography experience combined with modern AI-assisted image processing techniques.
+The workflows reflect the best practices of others and my 60+ years of practical astrophotography experience combined with modern AI-assisted image processing techniques.
 
 ---
 
