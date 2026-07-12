@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "name": "Chuck Faranda Professional Emission Nebula Workflow",
+  "name": "Chuck Faranda Emission Nebula Workflow",
   "description": "Optimized for H\u03b1, OIII and SII emission nebulae using OSC dual-band or mono narrowband data.",
   "lanes": [
     "main"

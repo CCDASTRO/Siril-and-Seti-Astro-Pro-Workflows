@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Dark Nebula Workflow",
+  "workflow_name": "Chuck Faranda Dark Nebula Workflow",
   "description": "Optimized defaults for dark nebulae and IFN with maximum preservation of faint dust.",
   "selections": [
     "utility/AutoStretch_Preview.py",

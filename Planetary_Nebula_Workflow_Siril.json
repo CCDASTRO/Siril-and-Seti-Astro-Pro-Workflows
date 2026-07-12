@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Planetary Nebula Workflow",
+  "workflow_name": "Chuck Faranda Planetary Nebula Workflow",
   "description": "Optimized defaults for planetary nebulae emphasizing shell detail and core protection.",
   "selections": [
     "utility/AutoStretch_Preview.py",

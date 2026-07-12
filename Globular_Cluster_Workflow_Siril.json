@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Globular Cluster Workflow",
+  "workflow_name": "Chuck Faranda Globular Cluster Workflow",
   "description": "Optimized defaults for globular clusters emphasizing stellar resolution and natural colors.",
   "selections": [
     "utility/AutoStretch_Preview.py",

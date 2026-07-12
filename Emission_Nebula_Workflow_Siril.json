@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Emission Nebula Workflow",
+  "workflow_name": "Chuck Faranda Emission Nebula Workflow",
   "description": "Optimized defaults for emission nebulae with H\u03b1/OIII/SII data.",
   "selections": [
     "utility/AutoStretch_Preview.py",

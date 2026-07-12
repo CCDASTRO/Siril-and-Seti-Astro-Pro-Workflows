@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Reflection Nebula Workflow",
+  "workflow_name": "Chuck Faranda Reflection Nebula Workflow",
   "description": "Optimized defaults for broadband reflection nebulae preserving subtle blue dust.",
   "selections": [
     "utility/AutoStretch_Preview.py",

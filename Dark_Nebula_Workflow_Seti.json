@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "name": "Chuck Faranda Professional Dark Nebula Workflow",
+  "name": "Chuck Faranda Dark Nebula Workflow",
   "description": "Optimized for dark nebulae and integrated flux nebula (IFN), emphasizing preservation of faint dust and absorption lanes.",
   "lanes": [
     "main"

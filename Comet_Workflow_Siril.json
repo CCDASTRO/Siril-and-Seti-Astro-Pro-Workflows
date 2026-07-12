@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Comet Workflow",
+  "workflow_name": "Chuck Faranda Comet Workflow",
   "description": "Optimized defaults for comet processing with separate comet/star processing support.",
   "selections": [
     "utility/AutoStretch_Preview.py",

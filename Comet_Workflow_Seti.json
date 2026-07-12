@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "name": "Chuck Faranda Professional Comet Workflow",
+  "name": "Chuck Faranda Comet Workflow",
   "description": "Optimized for comet imaging with emphasis on preserving coma, ion and dust tails while balancing comet and star detail.",
   "lanes": [
     "main"

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "name": "Chuck Faranda Professional Galaxy Workflow",
+  "name": "Chuck Faranda Galaxy Workflow",
   "description": "Broadband galaxy workflow optimized for preserving dust lanes, natural star colors, and fine spiral detail.",
   "lanes": [
     "main"

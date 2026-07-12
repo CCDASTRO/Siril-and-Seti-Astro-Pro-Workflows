@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "name": "Chuck Faranda Professional Globular Cluster Workflow",
+  "name": "Chuck Faranda Globular Cluster Workflow",
   "description": "Optimized for globular clusters with emphasis on resolving dense stellar cores while preserving natural star colors.",
   "lanes": [
     "main"

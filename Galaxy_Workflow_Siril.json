@@ -1,5 +1,5 @@
 {
-  "workflow_name": "Chuck Faranda Professional Galaxy Workflow",
+  "workflow_name": "Chuck Faranda Galaxy Workflow",
   "description": "Broadband galaxy workflow with optimized defaults for spiral galaxies and ellipticals.",
   "selections": [
     "utility/AutoStretch_Preview.py",
