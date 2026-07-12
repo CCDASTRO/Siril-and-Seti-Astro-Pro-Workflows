@@ -57,9 +57,29 @@
       "outputs": []
     },
     {
-      "id": "d7867da65bd6",
-      "command_id": "cosmicclarity",
-      "note": "Preferred: BlurXTerminator (moderate, ~20\u201330%), then NoiseXTerminator (light). StarXTerminator is optional. Alternatives: SyQon Parallax and SyQon Prism.",
+      "id": "4d89fe10e075",
+      "command_id": "BlurXTerminator.py",
+      "note": "RC-Astro BlurXTerminator. Preferred: BlurXTerminator (moderate, ~20–30%), then NoiseXTerminator (light). StarXTerminator is optional. Alternatives: SyQon Parallax and SyQon Prism.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "d5c4d512c414",
+      "command_id": "NoiseXTerminator.py",
+      "note": "RC-Astro NoiseXTerminator. Apply conservatively for the target.",
+      "enabled": true,
+      "kind": "action",
+      "lane": "main",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "3c2aa0130fc3",
+      "command_id": "StarXTerminator.py",
+      "note": "RC-Astro StarXTerminator. Use only when the workflow calls for starless processing.",
       "enabled": true,
       "kind": "action",
       "lane": "main",

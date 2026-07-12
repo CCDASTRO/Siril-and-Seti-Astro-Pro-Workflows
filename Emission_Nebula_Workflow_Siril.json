@@ -1,6 +1,6 @@
 {
   "workflow_name": "Chuck Faranda Emission Nebula Workflow",
-  "description": "Optimized defaults for emission nebulae with H\u03b1/OIII/SII data.",
+  "description": "Optimized defaults for emission nebulae with Hα/OIII/SII data.",
   "selections": [
     "utility/AutoStretch_Preview.py",
     "utility/Blink_Browse_Filter_Sort.py",
@@ -27,12 +27,14 @@
     "groupitem://7a1d10|function://S_PCC_DIALOG",
     "processing/AberrationRemover.py",
     "group://Sharpening#1d8677",
+    "groupitem://1d8677|processing/BlurXTerminator.py",
     "groupitem://1d8677|processing/CosmicClarity_Native.py",
     "groupitem://1d8677|processing/CosmicClarity_Sharpen.py",
     "groupitem://1d8677|function://DECONV_DIALOG",
     "groupitem://1d8677|processing/GraXpert-AI.py",
     "groupitem://1d8677|SyQon/Parallax.py",
     "group://Noise Removal#d5b2e3",
+    "groupitem://d5b2e3|processing/NoiseXTerminator.py",
     "groupitem://d5b2e3|processing/CosmicClarity_Denoise.py",
     "groupitem://d5b2e3|processing/CosmicClarity_Native.py",
     "groupitem://d5b2e3|function://EPF_DIALOG",
@@ -44,6 +46,7 @@
     "groupitem://d5b2e3|SyQon/Prism.py",
     "function://UNPURPLE_DIALOG",
     "group://Star Removal#7a0b52",
+    "groupitem://7a0b52|processing/StarXTerminator.py",
     "groupitem://7a0b52|processing/CosmicClarity_Darkstar.py",
     "groupitem://7a0b52|processing/CosmicClarity_Native.py",
     "groupitem://7a0b52|function://STARNET_DIALOG",
@@ -78,16 +81,16 @@
     "utility/ImageWindow.py"
   ],
   "step_colors": {
-    "step://Set display mode to Linear#716a70": "\ud83d\udfe2",
-    "step://Set display mode to AutoStretching": "\ud83d\udfe1",
-    "step://Set display mode to AutoStretch": "\ud83d\udfe2"
+    "step://Set display mode to Linear#716a70": "🟢",
+    "step://Set display mode to AutoStretching": "🟡",
+    "step://Set display mode to AutoStretch": "🟢"
   },
   "group_selections": {
-    "1d8677": "processing/CosmicClarity_Sharpen.py",
+    "1d8677": "processing/BlurXTerminator.py",
     "1fc952": "processing/AutoBGE.py",
     "7a1d10": "function://S_PCC_DIALOG",
-    "d5b2e3": "processing/CosmicClarity_Denoise.py",
-    "7a0b52": "processing/CosmicClarity_Darkstar.py",
+    "d5b2e3": "processing/NoiseXTerminator.py",
+    "7a0b52": "processing/StarXTerminator.py",
     "ea5305": "function://GHT_DIALOG",
     "de9985": "VeraLux/VeraLux_Curves.py",
     "652222": "VeraLux/VeraLux_Revela.py",
@@ -108,7 +111,7 @@
   },
   "notes": {
     "function://ROTATION_DIALOG": "Alternatively, you can make a selection, right-click it, and choose Crop.",
-    "group://Sharpening#1d8677": "Preferred: BlurXTerminator (15\u201325%). Enhance filaments without creating halos.",
+    "group://Sharpening#1d8677": "Preferred: BlurXTerminator (15–25%). Enhance filaments without creating halos.",
     "function://ICC_DIALOG": "Remove color profile if stretched image looks over saturated.",
     "group://Color Calibration#7a1d10": "Select the color calibration tool you prefer.",
     "group://Background Extraction#1fc952": "Preferred: AutoBGE. Preserve faint outer emission; GraXpert AI is the recommended alternative.",
@@ -139,7 +142,10 @@
     "groupitem://1d8677|processing/CosmicClarity_Sharpen.py": "Cosmic Clarity must be installed and configured.",
     "groupitem://d5b2e3|processing/CosmicClarity_Denoise.py": "Cosmic Clarity must be installed and configured.",
     "groupitem://7a0b52|processing/CosmicClarity_Darkstar.py": "Cosmic Clarity must be installed and configured.",
-    "groupitem://32aa9b|function://DIALOG_STAR_REMIX": "Starnet command line tool must be installed and configured."
+    "groupitem://32aa9b|function://DIALOG_STAR_REMIX": "Starnet command line tool must be installed and configured.",
+    "groupitem://1d8677|processing/BlurXTerminator.py": "RC-Astro BlurXTerminator must be installed and configured.",
+    "groupitem://d5b2e3|processing/NoiseXTerminator.py": "RC-Astro NoiseXTerminator must be installed and configured.",
+    "groupitem://7a0b52|processing/StarXTerminator.py": "RC-Astro StarXTerminator must be installed and configured."
   },
   "portable": true,
   "workflow_id": "CFPW-102",
