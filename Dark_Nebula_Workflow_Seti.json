@@ -57,30 +57,10 @@
       "outputs": []
     },
     {
-      "id": "4d89fe10e075",
-      "command_id": "BlurXTerminator.py",
-      "note": "RC-Astro BlurXTerminator. Preferred: BlurXTerminator (0–10%, optional) then NoiseXTerminator (minimal). SyQon Prism is the preferred alternative for preserving faint dust. StarXTerminator is generally NOT recommended.",
+      "id": "d7867da65bd6",
+      "command_id": "cosmicclarity",
+      "note": "Preferred: BlurXTerminator (0\u201310%, optional) then NoiseXTerminator (minimal). SyQon Prism is the preferred alternative for preserving faint dust. StarXTerminator is generally NOT recommended.",
       "enabled": true,
-      "kind": "action",
-      "lane": "main",
-      "inputs": [],
-      "outputs": []
-    },
-    {
-      "id": "d5c4d512c414",
-      "command_id": "NoiseXTerminator.py",
-      "note": "RC-Astro NoiseXTerminator. Apply conservatively for the target.",
-      "enabled": true,
-      "kind": "action",
-      "lane": "main",
-      "inputs": [],
-      "outputs": []
-    },
-    {
-      "id": "3c2aa0130fc3",
-      "command_id": "StarXTerminator.py",
-      "note": "RC-Astro StarXTerminator. Use only when the workflow calls for starless processing.",
-      "enabled": false,
       "kind": "action",
       "lane": "main",
       "inputs": [],
@@ -119,7 +99,7 @@
     {
       "id": "3345f9d23733",
       "command_id": "save_as",
-      "note": "Save the 32-bit floating-point FITS working master. Create a 16-bit TIFF only for final publication, printing, or software that requires TIFF.",
+      "note": "Archive a 16-bit TIFF master before export.",
       "enabled": true,
       "kind": "action",
       "lane": "main",
