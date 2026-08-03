@@ -43,6 +43,15 @@ Included documentation consists of:
 * Workflow Reference Manual
 * Companion documentation for *The Complete Siril & Seti Astro Suite Pro Processing Companion*
 
+### PixInsight Workflow Manager MVP
+
+The repository now includes an initial native PixInsight workflow wrapper with
+preflight validation and selectable GradientCorrection/GraXpert processing,
+followed by SPCC, BlurXTerminator, and NoiseXTerminator in constrained order.
+
+See [`pixinsight/README.md`](pixinsight/README.md) for requirements, installation,
+usage, and current limitations.
+
 ---
 
 ## Processing Philosophy
