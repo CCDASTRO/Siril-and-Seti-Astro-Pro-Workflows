@@ -2,7 +2,7 @@
 param(
     [Parameter()]
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string] $Version = '0.4.1'
+    [string] $Version = '0.4.2'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -74,6 +74,7 @@ $manifest = @"
       <description>
         <p>Configurable PixInsight post-processing workflow manager.</p>
         <ul>
+          <li>v0.4.2 selects the required PixInsight V8 JavaScript engine</li>
           <li>v0.4.1 ImageSolver preprocessing compatibility fix</li>
           <li>Metadata-assisted ImageSolver adapter with setup dialog</li>
           <li>GradientCorrection and GraXpert choices</li>

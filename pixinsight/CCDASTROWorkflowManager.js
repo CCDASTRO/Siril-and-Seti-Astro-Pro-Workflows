@@ -5,6 +5,8 @@
  * Copyright (c) 2026 Chuck Faranda / CCDASTRO, Inc.
  */
 
+#engine v8
+
 #feature-id    CCDASTRO > Workflow Manager
 #feature-info  Configurable OSC post-processing workflow with metadata-assisted plate solving and starless branches.
 
@@ -23,7 +25,7 @@
 #undef VERSION
 
 #define TITLE "CCDASTRO Workflow Manager"
-#define VERSION "0.4.1"
+#define VERSION "0.4.2"
 
 var SYQON_PARALLAX_ICON = "CCDASTRO_Parallax";
 var SYQON_PRISM_ICON = "CCDASTRO_Prism";
