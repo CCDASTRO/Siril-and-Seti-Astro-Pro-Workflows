@@ -53,6 +53,12 @@ stars branches, and PixelMath recombination.
 See [`pixinsight/README.md`](pixinsight/README.md) for requirements, installation,
 usage, and current limitations.
 
+PixInsight Update Manager repository URL:
+
+```text
+https://raw.githubusercontent.com/CCDASTRO/Siril-and-Seti-Astro-Pro-Workflows/main/updates/
+```
+
 ---
 
 ## Processing Philosophy

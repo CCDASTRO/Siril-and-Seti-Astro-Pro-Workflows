@@ -43,7 +43,21 @@ and SPCC requires a plate-solved image.
 The preflight validator reports unavailable process classes and missing SyQon
 process icons before execution.
 
-## Install in PixInsight
+## Install with PixInsight Update Manager
+
+1. Choose **Resources > Updates > Manage Repositories**.
+2. Click **Add** and enter:
+
+   ```text
+   https://raw.githubusercontent.com/CCDASTRO/Siril-and-Seti-Astro-Pro-Workflows/main/updates/
+   ```
+
+3. Choose **Resources > Updates > Check for Updates**.
+4. Install the CCDASTRO package.
+5. Exit PixInsight so its updater can apply the package, then restart.
+6. Open **Script > CCDASTRO > Workflow Manager**.
+
+## Install manually as a Feature Script
 
 1. Download or clone this repository.
 2. Keep the complete `pixinsight` directory in a permanent location.
@@ -54,8 +68,9 @@ process icons before execution.
 7. Enable recursive search if available and allow the feature scan to finish.
 8. Open **Script > CCDASTRO > Workflow Manager**.
 
-This GitHub directory is not a PixInsight Update Manager repository. Do not add
-its GitHub URL under **Resources > Updates > Manage Repositories**.
+The GitHub `tree/main/pixinsight` webpage is not an update URL. Use the raw
+`updates/` URL above for Update Manager or select the local directory for a
+manual Feature Scripts installation.
 
 ## Configure SyQon choices
 

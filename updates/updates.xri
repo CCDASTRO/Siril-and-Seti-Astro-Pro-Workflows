@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xri version="1.0">
+  <description>
+    <p>CCDASTRO PixInsight Scripts</p>
+    <p>Configurable post-processing workflows for integrated OSC/RGB images.</p>
+  </description>
+  <platform os="all" arch="noarch" version="1.8.9:2.0.0">
+    <package fileName="CCDASTROWorkflowManager-0.3.0.zip" sha1="e863a2b8b254c5f08219b98b1618cfdcf5de157e" type="script" releaseDate="20260803">
+      <title>CCDASTRO Workflow Manager 0.3.0</title>
+      <description>
+        <p>Configurable PixInsight post-processing workflow manager.</p>
+        <ul>
+          <li>GradientCorrection and GraXpert choices</li>
+          <li>BlurXTerminator and SyQon Parallax choices</li>
+          <li>NoiseXTerminator and SyQon Prism choices</li>
+          <li>Starless and stars-only workflow branches</li>
+          <li>Independent stretching and PixelMath recombination</li>
+        </ul>
+      </description>
+    </package>
+  </platform>
+</xri>
