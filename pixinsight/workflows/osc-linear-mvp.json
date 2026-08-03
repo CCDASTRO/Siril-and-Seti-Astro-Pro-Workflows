@@ -1,8 +1,8 @@
 {
   "$schema": "./osc-linear-mvp.schema.json",
   "schemaVersion": 2,
-  "id": "osc-linear-v0.2",
-  "name": "OSC Linear and Starless Workflow v0.2",
+  "id": "osc-linear-v0.3",
+  "name": "OSC Linear and Starless Workflow v0.3",
   "description": "Post-integration workflow with selectable SyQon tools and starless/stars branches.",
   "input": {
     "stage": "linear-integrated",

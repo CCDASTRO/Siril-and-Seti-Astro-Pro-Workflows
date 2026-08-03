@@ -15,7 +15,7 @@
 #include <pjsr/TextAlign.jsh>
 
 #define TITLE "CCDASTRO Workflow Manager"
-#define VERSION "0.2.0"
+#define VERSION "0.3.0"
 
 var SYQON_PARALLAX_ICON = "CCDASTRO_Parallax";
 var SYQON_PRISM_ICON = "CCDASTRO_Prism";
