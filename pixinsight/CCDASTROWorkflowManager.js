@@ -14,14 +14,16 @@
 #include <pjsr/FrameStyle.jsh>
 #include <pjsr/TextAlign.jsh>
 
-#define USE_SOLVER_LIBRARY true
 #define SETTINGS_MODULE "CCDASTROWorkflowManager"
-#include "../ImageSolver/ImageSolver.js"
+#define SOLVER_SETTINGS_MODULE "ImageSolver"
+#define VERSION "6.4.2"
+#include <pjsr/astrometry/AstrometricMetadata.js>
+#include <pjsr/astrometry/AstronomicalCatalogs.js>
+#include "../ImageSolver/ImageSolverEngine.js"
 #undef VERSION
-#undef TITLE
 
 #define TITLE "CCDASTRO Workflow Manager"
-#define VERSION "0.4.0"
+#define VERSION "0.4.1"
 
 var SYQON_PARALLAX_ICON = "CCDASTRO_Parallax";
 var SYQON_PRISM_ICON = "CCDASTRO_Prism";

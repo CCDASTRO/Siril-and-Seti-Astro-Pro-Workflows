@@ -2,7 +2,7 @@
 param(
     [Parameter()]
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string] $Version = '0.4.0'
+    [string] $Version = '0.4.1'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -22,12 +22,13 @@ if (-not (Test-Path -LiteralPath $sourceScript -PathType Leaf)) {
 }
 
 $sourceText = [System.IO.File]::ReadAllText($sourceScript)
-$versionMatch = [regex]::Match($sourceText, '#define\s+VERSION\s+"([^"]+)"')
-if (-not $versionMatch.Success) {
+$versionMatches = [regex]::Matches($sourceText, '#define\s+VERSION\s+"([^"]+)"')
+if ($versionMatches.Count -eq 0) {
     throw 'Could not read VERSION from CCDASTROWorkflowManager.js.'
 }
-if ($versionMatch.Groups[1].Value -ne $Version) {
-    throw "Requested package version $Version does not match script version $($versionMatch.Groups[1].Value)."
+$workflowVersion = $versionMatches[$versionMatches.Count - 1].Groups[1].Value
+if ($workflowVersion -ne $Version) {
+    throw "Requested package version $Version does not match script version $workflowVersion."
 }
 
 if (Test-Path -LiteralPath $stageRoot) {
@@ -73,6 +74,7 @@ $manifest = @"
       <description>
         <p>Configurable PixInsight post-processing workflow manager.</p>
         <ul>
+          <li>v0.4.1 ImageSolver preprocessing compatibility fix</li>
           <li>Metadata-assisted ImageSolver adapter with setup dialog</li>
           <li>GradientCorrection and GraXpert choices</li>
           <li>BlurXTerminator and SyQon Parallax choices</li>
