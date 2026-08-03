@@ -19,7 +19,7 @@
 #undef VERSION
 
 #define TITLE "CCDASTRO Workflow Manager"
-#define VERSION "0.4.4"
+#define VERSION "0.4.5"
 
 var SYQON_PARALLAX_ICON = "CCDASTRO_Parallax";
 var SYQON_PRISM_ICON = "CCDASTRO_Prism";
@@ -526,10 +526,11 @@ function resultText(result)
    return text;
 }
 
-function PlateSolveSetupDialog(settings)
+class PlateSolveSetupDialog extends Dialog
 {
-   this.__base__ = Dialog;
-   this.__base__();
+constructor(settings)
+{
+   super();
    this.windowTitle = "Plate Solve Setup";
    this.minWidth = 620;
    var original = {
@@ -661,8 +662,7 @@ function PlateSolveSetupDialog(settings)
    };
    this.adjustToContents();
 }
-
-PlateSolveSetupDialog.prototype = new Dialog;
+}
 
 function WorkflowRow(parent, step)
 {
@@ -739,10 +739,11 @@ function labeledCombo(parent, label, items, selected)
    return control;
 }
 
-function WorkflowDialog()
+class WorkflowDialog extends Dialog
 {
-   this.__base__ = Dialog;
-   this.__base__();
+constructor()
+{
+   super();
    this.windowTitle = TITLE + " " + VERSION;
    this.minWidth = 760;
 
@@ -927,8 +928,7 @@ function WorkflowDialog()
    this.adjustToContents();
    this.setFixedWidth(this.width);
 }
-
-WorkflowDialog.prototype = new Dialog;
+}
 
 function main()
 {
