@@ -10,12 +10,6 @@
 #feature-id    CCDASTRO > Workflow Manager
 #feature-info  Configurable OSC post-processing workflow with metadata-assisted plate solving and starless branches.
 
-#include <pjsr/StdButton.jsh>
-#include <pjsr/StdIcon.jsh>
-#include <pjsr/Sizer.jsh>
-#include <pjsr/FrameStyle.jsh>
-#include <pjsr/TextAlign.jsh>
-
 #define SETTINGS_MODULE "CCDASTROWorkflowManager"
 #define SOLVER_SETTINGS_MODULE "ImageSolver"
 #define VERSION "6.4.2"
@@ -25,7 +19,7 @@
 #undef VERSION
 
 #define TITLE "CCDASTRO Workflow Manager"
-#define VERSION "0.4.3"
+#define VERSION "0.4.4"
 
 var SYQON_PARALLAX_ICON = "CCDASTRO_Parallax";
 var SYQON_PRISM_ICON = "CCDASTRO_Prism";
@@ -559,7 +553,7 @@ function PlateSolveSetupDialog(settings)
       row.label = new Label(parent);
       row.label.text = caption;
       row.label.minWidth = 190;
-      row.label.textAlignment = TextAlign_Right | TextAlign_VertCenter;
+      row.label.textAlignment = TextAlignment.Right | TextAlignment.VertCenter;
       row.edit = new Edit(parent);
       row.edit.text = value;
       row.edit.toolTip = tip;
@@ -583,7 +577,7 @@ function PlateSolveSetupDialog(settings)
       "Optional image scale. When present, this takes precedence over focal length and pixel size.");
 
    this.sourceLabel = new Label(this);
-   this.sourceLabel.frameStyle = FrameStyle_Box;
+   this.sourceLabel.frameStyle = FrameStyle.Box;
    this.sourceLabel.margin = 5;
    this.sourceLabel.text = "Source: " + settings.source;
 
@@ -644,7 +638,7 @@ function PlateSolveSetupDialog(settings)
       }
       catch (e)
       {
-         (new MessageBox(e.message, "Plate Solve Setup", StdIcon_Error, StdButton_Ok)).execute();
+         (new MessageBox(e.message, "Plate Solve Setup", StdIcon.Error, StdButton.Ok)).execute();
       }
    };
    this.okButton.onClick = function()
@@ -652,7 +646,7 @@ function PlateSolveSetupDialog(settings)
       try { self.saveSettings(); self.ok(); }
       catch (e)
       {
-         (new MessageBox(e.message, "Plate Solve Setup", StdIcon_Error, StdButton_Ok)).execute();
+         (new MessageBox(e.message, "Plate Solve Setup", StdIcon.Error, StdButton.Ok)).execute();
       }
    };
    this.cancelButton.onClick = function()
@@ -689,7 +683,7 @@ function WorkflowRow(parent, step)
    }
    this.status = new Label(parent);
    this.status.minWidth = 110;
-   this.status.textAlignment = TextAlign_Right | TextAlign_VertCenter;
+   this.status.textAlignment = TextAlignment.Right | TextAlignment.VertCenter;
    this.setup = null;
    if (step.id === "plateSolve")
    {
@@ -732,7 +726,7 @@ function labeledCombo(parent, label, items, selected)
    control.label = new Label(parent);
    control.label.text = label;
    control.label.minWidth = 210;
-   control.label.textAlignment = TextAlign_Right | TextAlign_VertCenter;
+   control.label.textAlignment = TextAlignment.Right | TextAlignment.VertCenter;
    control.combo = new ComboBox(parent);
    control.combo.minWidth = 260;
    for (var i = 0; i < items.length; ++i)
@@ -761,7 +755,7 @@ function WorkflowDialog()
       "seed values and skips an image that already has an astrometric solution. " +
       "SyQon choices use configured process icons.";
    this.inputLabel = new Label(this);
-   this.inputLabel.frameStyle = FrameStyle_Box;
+   this.inputLabel.frameStyle = FrameStyle.Box;
    this.inputLabel.margin = 6;
    this.inputLabel.text = "Active view: " +
       (ImageWindow.activeWindow.isNull ? "<none>" : ImageWindow.activeWindow.currentView.fullId);
@@ -857,7 +851,7 @@ function WorkflowDialog()
       var result = new PreflightValidator(self).validate();
       self.statusText.text = resultText(result);
       (new MessageBox(resultText(result), TITLE,
-         result.ok() ? StdIcon_Information : StdIcon_Error, StdButton_Ok)).execute();
+         result.ok() ? StdIcon.Information : StdIcon.Error, StdButton.Ok)).execute();
    };
 
    this.runButton.onClick = function()
@@ -866,11 +860,11 @@ function WorkflowDialog()
       self.statusText.text = resultText(result);
       if (!result.ok())
       {
-         (new MessageBox(resultText(result), TITLE, StdIcon_Error, StdButton_Ok)).execute();
+         (new MessageBox(resultText(result), TITLE, StdIcon.Error, StdButton.Ok)).execute();
          return;
       }
       if ((new MessageBox(resultText(result) + "\n\nRun on the active view?", TITLE,
-          StdIcon_Warning, StdButton_Yes, StdButton_No)).execute() !== StdButton_Yes)
+          StdIcon.Warning, StdButton.Yes, StdButton.No)).execute() !== StdButton.Yes)
          return;
 
       Console.show();
@@ -917,14 +911,14 @@ function WorkflowDialog()
          self.statusText.text = "Workflow completed successfully.";
          logLine("Workflow completed successfully.");
          (new MessageBox("Workflow completed successfully.", TITLE,
-            StdIcon_Information, StdButton_Ok)).execute();
+            StdIcon.Information, StdButton.Ok)).execute();
       }
       catch (e)
       {
          var message = "Workflow stopped: " + e.message;
          self.statusText.text = message;
          Console.criticalln("<end><cbr><b>[CCDASTRO] " + message + "</b>");
-         (new MessageBox(message, TITLE, StdIcon_Error, StdButton_Ok)).execute();
+         (new MessageBox(message, TITLE, StdIcon.Error, StdButton.Ok)).execute();
       }
       finally { self.enabled = true; }
    };
