@@ -45,9 +45,10 @@ Included documentation consists of:
 
 ### PixInsight Workflow Manager MVP
 
-The repository now includes an initial native PixInsight workflow wrapper with
-preflight validation and selectable GradientCorrection/GraXpert processing,
-followed by SPCC, BlurXTerminator, and NoiseXTerminator in constrained order.
+The repository includes a native PixInsight workflow wrapper with preflight
+validation, selectable GradientCorrection/GraXpert, BlurXTerminator/SyQon
+Parallax, NoiseXTerminator/SyQon Prism, star separation, independent starless and
+stars branches, and PixelMath recombination.
 
 See [`pixinsight/README.md`](pixinsight/README.md) for requirements, installation,
 usage, and current limitations.

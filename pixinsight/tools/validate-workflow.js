@@ -14,7 +14,7 @@ function requireValue(condition, message) {
   if (!condition) errors.push(message);
 }
 
-requireValue(workflow.schemaVersion === 1, "schemaVersion must be 1");
+requireValue(workflow.schemaVersion === 2, "schemaVersion must be 2");
 requireValue(workflow.input && workflow.input.stage === "linear-integrated",
   "input.stage must be linear-integrated");
 requireValue(Array.isArray(workflow.steps) && workflow.steps.length > 0,
@@ -31,8 +31,19 @@ for (const step of workflow.steps || []) {
   requireValue(!orders.has(step.order), `${step.id}: duplicate order ${step.order}`);
   requireValue(Array.isArray(step.adapters) && step.adapters.length > 0,
     `${step.id}: adapters must not be empty`);
-  requireValue(step.adapters.includes(step.selectedAdapter),
+  const adapterIds = (step.adapters || []).map(adapter => adapter.id);
+  requireValue(adapterIds.includes(step.selectedAdapter),
     `${step.id}: selectedAdapter must occur in adapters`);
+  for (const adapter of step.adapters || []) {
+    requireValue(["process", "processIcon", "internal"].includes(adapter.kind),
+      `${step.id}/${adapter.id}: invalid adapter kind`);
+    if (adapter.kind === "process")
+      requireValue(typeof adapter.processClass === "string" && adapter.processClass.length > 0,
+        `${step.id}/${adapter.id}: process adapters require processClass`);
+    if (adapter.kind === "processIcon")
+      requireValue(typeof adapter.iconId === "string" && adapter.iconId.length > 0,
+        `${step.id}/${adapter.id}: processIcon adapters require iconId`);
+  }
   byId.set(step.id, step);
   orders.add(step.order);
 }

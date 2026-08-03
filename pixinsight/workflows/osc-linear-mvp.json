@@ -1,24 +1,29 @@
 {
   "$schema": "./osc-linear-mvp.schema.json",
-  "schemaVersion": 1,
-  "id": "osc-linear-mvp",
-  "name": "OSC Linear Post-Processing MVP",
-  "description": "Post-integration workflow with constrained scientific ordering.",
+  "schemaVersion": 2,
+  "id": "osc-linear-v0.3",
+  "name": "OSC Linear and Starless Workflow v0.3",
+  "description": "Post-integration workflow with selectable SyQon tools and starless/stars branches.",
   "input": {
     "stage": "linear-integrated",
     "colorModel": "OSC-RGB",
     "sampleFormat": "any-float"
   },
+  "lanes": ["main", "starless", "stars"],
   "steps": [
     {
       "id": "gradient",
       "order": 10,
       "enabled": true,
       "stage": "linear",
+      "lane": "main",
       "selectedAdapter": "gradientCorrection",
-      "adapters": ["gradientCorrection", "graxpert"],
+      "adapters": [
+        { "id": "gradientCorrection", "kind": "process", "processClass": "GradientCorrection" },
+        { "id": "graxpert", "kind": "process", "processClass": "GraXpert" }
+      ],
       "requires": ["linear", "rgb"],
-      "mustPrecede": ["colorCalibration", "deconvolution", "linearDenoise"],
+      "mustPrecede": ["colorCalibration", "deconvolution", "noiseReduction", "starSeparation"],
       "parameters": {}
     },
     {
@@ -26,43 +31,104 @@
       "order": 20,
       "enabled": true,
       "stage": "linear",
+      "lane": "main",
       "selectedAdapter": "spcc",
-      "adapters": ["spcc"],
+      "adapters": [
+        { "id": "spcc", "kind": "process", "processClass": "SpectrophotometricColorCalibration" }
+      ],
       "requires": ["linear", "rgb", "astrometricSolution"],
       "mustFollow": ["gradient"],
-      "mustPrecede": ["deconvolution", "linearDenoise"],
-      "parameters": {}
+      "mustPrecede": ["deconvolution", "noiseReduction", "starSeparation"],
+      "parameters": { "catalogId": "GaiaDR3SP", "autoLimitMagnitude": true }
     },
     {
       "id": "deconvolution",
       "order": 30,
       "enabled": true,
       "stage": "linear",
+      "lane": "main",
       "selectedAdapter": "blurXTerminator",
-      "adapters": ["blurXTerminator"],
+      "adapters": [
+        { "id": "blurXTerminator", "kind": "process", "processClass": "BlurXTerminator" },
+        { "id": "syqonParallax", "kind": "processIcon", "iconId": "CCDASTRO_Parallax" }
+      ],
       "requires": ["linear", "rgb", "starsPresent"],
       "mustFollow": ["gradient"],
-      "mustPrecede": ["linearDenoise"],
-      "parameters": {
-        "correctOnly": false,
-        "sharpenStars": 0.25,
-        "adjustHalos": 0.0,
-        "sharpenNonstellar": 0.5
-      }
+      "mustPrecede": ["noiseReduction", "starSeparation"],
+      "parameters": {}
     },
     {
-      "id": "linearDenoise",
+      "id": "noiseReduction",
       "order": 40,
       "enabled": true,
-      "stage": "linear",
+      "stage": "branch",
+      "lane": "starless",
       "selectedAdapter": "noiseXTerminator",
-      "adapters": ["noiseXTerminator"],
+      "adapters": [
+        { "id": "noiseXTerminator", "kind": "process", "processClass": "NoiseXTerminator" },
+        { "id": "syqonPrism", "kind": "processIcon", "iconId": "CCDASTRO_Prism" }
+      ],
+      "requires": ["rgb"],
+      "mustFollow": ["deconvolution"],
+      "parameters": { "placement": "starless", "denoise": 0.75, "iterations": 2 }
+    },
+    {
+      "id": "starSeparation",
+      "order": 50,
+      "enabled": true,
+      "stage": "linear",
+      "lane": "main",
+      "selectedAdapter": "starXTerminator",
+      "adapters": [
+        { "id": "starXTerminator", "kind": "process", "processClass": "StarXTerminator" },
+        { "id": "starNet2", "kind": "process", "processClass": "StarNet2" },
+        { "id": "syqonStarless", "kind": "processIcon", "iconId": "CCDASTRO_Starless" }
+      ],
       "requires": ["linear", "rgb"],
       "mustFollow": ["deconvolution"],
-      "parameters": {
-        "denoise": 0.75,
-        "detail": 0.15
-      }
+      "parameters": { "generateStars": true, "linearSubtraction": true }
+    },
+    {
+      "id": "starlessStretch",
+      "order": 60,
+      "enabled": true,
+      "stage": "nonlinear",
+      "lane": "starless",
+      "selectedAdapter": "linkedAutoHistogram",
+      "adapters": [
+        { "id": "linkedAutoHistogram", "kind": "internal" }
+      ],
+      "requires": ["starlessView"],
+      "mustFollow": ["starSeparation", "noiseReduction"],
+      "parameters": { "targetBackground": 0.25 }
+    },
+    {
+      "id": "starsStretch",
+      "order": 70,
+      "enabled": true,
+      "stage": "nonlinear",
+      "lane": "stars",
+      "selectedAdapter": "linkedAutoHistogram",
+      "adapters": [
+        { "id": "linkedAutoHistogram", "kind": "internal" }
+      ],
+      "requires": ["starsView"],
+      "mustFollow": ["starSeparation"],
+      "parameters": { "targetBackground": 0.35 }
+    },
+    {
+      "id": "recombine",
+      "order": 80,
+      "enabled": true,
+      "stage": "nonlinear",
+      "lane": "main",
+      "selectedAdapter": "pixelMathScreen",
+      "adapters": [
+        { "id": "pixelMathScreen", "kind": "internal" }
+      ],
+      "requires": ["starlessView", "starsView"],
+      "mustFollow": ["starlessStretch", "starsStretch"],
+      "parameters": { "mode": "screen" }
     }
   ]
 }
