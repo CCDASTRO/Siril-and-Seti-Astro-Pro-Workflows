@@ -5,11 +5,12 @@
     <p>Configurable post-processing workflows for integrated OSC/RGB images.</p>
   </description>
   <platform os="all" arch="noarch" version="1.9.4:2.0.0">
-    <package fileName="CCDASTROWorkflowManager-0.4.0.zip" sha1="ae761b62acec10217f7e5b981039bea8328baa04" type="script" releaseDate="20260803">
-      <title>CCDASTRO Workflow Manager 0.4.0</title>
+    <package fileName="CCDASTROWorkflowManager-0.4.1.zip" sha1="0f2d9352b5ccc95c8481701bc0db06df2ddcb744" type="script" releaseDate="20260803">
+      <title>CCDASTRO Workflow Manager 0.4.1</title>
       <description>
         <p>Configurable PixInsight post-processing workflow manager.</p>
         <ul>
+          <li>v0.4.1 ImageSolver preprocessing compatibility fix</li>
           <li>Metadata-assisted ImageSolver adapter with setup dialog</li>
           <li>GradientCorrection and GraXpert choices</li>
           <li>BlurXTerminator and SyQon Parallax choices</li>
