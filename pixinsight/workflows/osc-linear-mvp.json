@@ -1,0 +1,68 @@
+{
+  "$schema": "./osc-linear-mvp.schema.json",
+  "schemaVersion": 1,
+  "id": "osc-linear-mvp",
+  "name": "OSC Linear Post-Processing MVP",
+  "description": "Post-integration workflow with constrained scientific ordering.",
+  "input": {
+    "stage": "linear-integrated",
+    "colorModel": "OSC-RGB",
+    "sampleFormat": "any-float"
+  },
+  "steps": [
+    {
+      "id": "gradient",
+      "order": 10,
+      "enabled": true,
+      "stage": "linear",
+      "selectedAdapter": "gradientCorrection",
+      "adapters": ["gradientCorrection", "graxpert"],
+      "requires": ["linear", "rgb"],
+      "mustPrecede": ["colorCalibration", "deconvolution", "linearDenoise"],
+      "parameters": {}
+    },
+    {
+      "id": "colorCalibration",
+      "order": 20,
+      "enabled": true,
+      "stage": "linear",
+      "selectedAdapter": "spcc",
+      "adapters": ["spcc"],
+      "requires": ["linear", "rgb", "astrometricSolution"],
+      "mustFollow": ["gradient"],
+      "mustPrecede": ["deconvolution", "linearDenoise"],
+      "parameters": {}
+    },
+    {
+      "id": "deconvolution",
+      "order": 30,
+      "enabled": true,
+      "stage": "linear",
+      "selectedAdapter": "blurXTerminator",
+      "adapters": ["blurXTerminator"],
+      "requires": ["linear", "rgb", "starsPresent"],
+      "mustFollow": ["gradient"],
+      "mustPrecede": ["linearDenoise"],
+      "parameters": {
+        "correctOnly": false,
+        "sharpenStars": 0.25,
+        "adjustHalos": 0.0,
+        "sharpenNonstellar": 0.5
+      }
+    },
+    {
+      "id": "linearDenoise",
+      "order": 40,
+      "enabled": true,
+      "stage": "linear",
+      "selectedAdapter": "noiseXTerminator",
+      "adapters": ["noiseXTerminator"],
+      "requires": ["linear", "rgb"],
+      "mustFollow": ["deconvolution"],
+      "parameters": {
+        "denoise": 0.75,
+        "detail": 0.15
+      }
+    }
+  ]
+}
