@@ -2,7 +2,7 @@
 param(
     [Parameter()]
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string] $Version = '0.4.2'
+    [string] $Version = '0.4.3'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -16,6 +16,7 @@ $packageName = "CCDASTROWorkflowManager-$Version.zip"
 $packagePath = Join-Path $updatesDirectory $packageName
 $manifestPath = Join-Path $updatesDirectory 'updates.xri'
 $releaseDate = (Get-Date).ToUniversalTime().ToString('yyyyMMdd')
+$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 
 if (-not (Test-Path -LiteralPath $sourceScript -PathType Leaf)) {
     throw "Workflow script not found: $sourceScript"
@@ -37,7 +38,20 @@ if (Test-Path -LiteralPath $stageRoot) {
 New-Item -ItemType Directory -Path $stageScriptDirectory -Force | Out-Null
 New-Item -ItemType Directory -Path $updatesDirectory -Force | Out-Null
 
-Copy-Item -LiteralPath $sourceScript -Destination $stageScriptDirectory
+$stagedScriptPath = Join-Path $stageScriptDirectory 'CCDASTROWorkflowManager.js'
+$normalizedSource = $sourceText.Replace("`r`n", "`n").Replace("`r", "`n").Replace("`n", "`r`n")
+[System.IO.File]::WriteAllText($stagedScriptPath, $normalizedSource, $utf8WithoutBom)
+$stagedSource = [System.IO.File]::ReadAllText($stagedScriptPath)
+if ([regex]::IsMatch($stagedSource, '(?<!\r)\n')) {
+    throw 'Staged PixInsight script contains bare LF line endings.'
+}
+$stagedBytes = [System.IO.File]::ReadAllBytes($stagedScriptPath)
+if ($stagedBytes.Length -ge 3 -and
+    $stagedBytes[0] -eq 0xEF -and
+    $stagedBytes[1] -eq 0xBB -and
+    $stagedBytes[2] -eq 0xBF) {
+    throw 'Staged PixInsight script must be UTF-8 without a BOM.'
+}
 
 if (Test-Path -LiteralPath $packagePath) {
     Remove-Item -LiteralPath $packagePath -Force
@@ -74,6 +88,7 @@ $manifest = @"
       <description>
         <p>Configurable PixInsight post-processing workflow manager.</p>
         <ul>
+          <li>v0.4.3 normalizes Windows script line endings for PixInsight preprocessing</li>
           <li>v0.4.2 selects the required PixInsight V8 JavaScript engine</li>
           <li>v0.4.1 ImageSolver preprocessing compatibility fix</li>
           <li>Metadata-assisted ImageSolver adapter with setup dialog</li>
@@ -89,7 +104,6 @@ $manifest = @"
 </xri>
 "@
 
-$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($manifestPath, $manifest, $utf8WithoutBom)
 
 [xml] $parsedManifest = [System.IO.File]::ReadAllText($manifestPath)
