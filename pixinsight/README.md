@@ -1,9 +1,9 @@
-# CCDASTRO PixInsight Workflow Manager v0.4.2
+# CCDASTRO PixInsight Workflow Manager v0.4.3
 
 This directory contains a native PixInsight JavaScript Runtime (PJSR) workflow
 manager for an integrated linear OSC/RGB master.
 
-## v0.4.2 capabilities
+## v0.4.3 capabilities
 
 - Ordered checkboxes for gradient correction, SPCC, deblur, denoise, and star
   separation.
