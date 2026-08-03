@@ -2,7 +2,7 @@
 param(
     [Parameter()]
     [ValidatePattern('^\d+\.\d+\.\d+$')]
-    [string] $Version = '0.3.0'
+    [string] $Version = '0.4.0'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,12 +67,13 @@ $manifest = @"
     <p>CCDASTRO PixInsight Scripts</p>
     <p>Configurable post-processing workflows for integrated OSC/RGB images.</p>
   </description>
-  <platform os="all" arch="noarch" version="1.8.9:2.0.0">
+  <platform os="all" arch="noarch" version="1.9.4:2.0.0">
     <package fileName="$packageName" sha1="$sha1" type="script" releaseDate="$releaseDate">
       <title>CCDASTRO Workflow Manager $Version</title>
       <description>
         <p>Configurable PixInsight post-processing workflow manager.</p>
         <ul>
+          <li>Metadata-assisted ImageSolver adapter with setup dialog</li>
           <li>GradientCorrection and GraXpert choices</li>
           <li>BlurXTerminator and SyQon Parallax choices</li>
           <li>NoiseXTerminator and SyQon Prism choices</li>

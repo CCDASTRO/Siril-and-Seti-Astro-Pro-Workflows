@@ -48,6 +48,14 @@ for (const step of workflow.steps || []) {
   orders.add(step.order);
 }
 
+const requiredOrder = ["gradient", "plateSolve", "colorCalibration"];
+for (let i = 0; i < requiredOrder.length; ++i) {
+  requireValue(byId.has(requiredOrder[i]), `missing required workflow step: ${requiredOrder[i]}`);
+  if (i > 0 && byId.has(requiredOrder[i - 1]) && byId.has(requiredOrder[i]))
+    requireValue(byId.get(requiredOrder[i - 1]).order < byId.get(requiredOrder[i]).order,
+      `${requiredOrder[i - 1]} must precede ${requiredOrder[i]}`);
+}
+
 for (const step of workflow.steps || []) {
   for (const successor of step.mustPrecede || []) {
     requireValue(byId.has(successor), `${step.id}: unknown mustPrecede step ${successor}`);

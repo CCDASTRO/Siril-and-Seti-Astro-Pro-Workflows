@@ -6,7 +6,7 @@
  */
 
 #feature-id    CCDASTRO > Workflow Manager
-#feature-info  Configurable OSC post-processing workflow with starless branch support.
+#feature-info  Configurable OSC post-processing workflow with metadata-assisted plate solving and starless branches.
 
 #include <pjsr/StdButton.jsh>
 #include <pjsr/StdIcon.jsh>
@@ -14,12 +14,143 @@
 #include <pjsr/FrameStyle.jsh>
 #include <pjsr/TextAlign.jsh>
 
+#define USE_SOLVER_LIBRARY true
+#define SETTINGS_MODULE "CCDASTROWorkflowManager"
+#include "../ImageSolver/ImageSolver.js"
+#undef VERSION
+#undef TITLE
+
 #define TITLE "CCDASTRO Workflow Manager"
-#define VERSION "0.3.0"
+#define VERSION "0.4.0"
 
 var SYQON_PARALLAX_ICON = "CCDASTRO_Parallax";
 var SYQON_PRISM_ICON = "CCDASTRO_Prism";
 var SYQON_STARLESS_ICON = "CCDASTRO_Starless";
+
+function imageHasAstrometricSolution(window)
+{
+   if (window === null || window.isNull)
+      return false;
+   try { return window.astrometricSolutionSummary().trim().length > 0; }
+   catch (e)
+   {
+      try { return window.hasAstrometricSolution; }
+      catch (e2) { return false; }
+   }
+}
+
+function finitePositive(value)
+{
+   return isFinite(value) && value > 0;
+}
+
+function finiteCoordinate(value)
+{
+   return isFinite(value);
+}
+
+function formatNumber(value, precision)
+{
+   return isFinite(value) ? value.toFixed(precision) : "";
+}
+
+function parseOptionalNumber(text)
+{
+   var value = parseFloat(text.trim());
+   return isFinite(value) ? value : NaN;
+}
+
+function PlateSolveSettings()
+{
+   this.ra = NaN;          // degrees
+   this.dec = NaN;         // degrees
+   this.focal = NaN;       // millimeters
+   this.pixelSize = NaN;   // micrometers
+   this.resolution = NaN;  // degrees per pixel
+   this.source = "Not initialized";
+}
+
+PlateSolveSettings.prototype.autofill = function(window)
+{
+   if (window === null || window.isNull)
+      throw new Error("Open and select the integrated image before configuring plate solving.");
+   var solver = new ImageSolver;
+   solver.initialize(window, false /*prioritizeSettings*/);
+   this.ra = solver.metadata.ra;
+   this.dec = solver.metadata.dec;
+   this.focal = solver.metadata.focal;
+   this.pixelSize = solver.metadata.xpixsz;
+   this.resolution = solver.metadata.resolution;
+   this.source = "Active image metadata";
+};
+
+PlateSolveSettings.prototype.complete = function()
+{
+   var coordinatesOk = finiteCoordinate(this.ra) && this.ra >= 0 && this.ra <= 360 &&
+      finiteCoordinate(this.dec) && this.dec >= -90 && this.dec <= 90;
+   var scaleOk = finitePositive(this.resolution) ||
+      (finitePositive(this.focal) && finitePositive(this.pixelSize));
+   return coordinatesOk && scaleOk;
+};
+
+function PlateSolveAdapter(settings)
+{
+   this.id = "plateSolve";
+   this.label = "ImageSolver";
+   this.settings = settings;
+}
+
+PlateSolveAdapter.prototype.available = function()
+{
+   return typeof ImageSolver !== "undefined";
+};
+
+PlateSolveAdapter.prototype.requirement = function()
+{
+   if (!this.available())
+      return "Install the standard PixInsight ImageSolver script.";
+   if (!this.settings.complete())
+      return "Open Plate Solve Setup and provide coordinates plus image scale or focal length and pixel size.";
+   return "Plate-solving setup is ready.";
+};
+
+PlateSolveAdapter.prototype.execute = function(view)
+{
+   var window = view.window;
+   if (imageHasAstrometricSolution(window))
+   {
+      logLine("Plate Solve if needed: existing astrometric solution retained.");
+      return;
+   }
+   if (!this.settings.complete())
+      throw new Error(this.requirement());
+
+   var solver = new ImageSolver;
+   solver.initialize(window, false /*prioritizeSettings*/);
+   solver.metadata.ra = this.settings.ra;
+   solver.metadata.dec = this.settings.dec;
+   solver.metadata.referenceSystem = "ICRS";
+   solver.metadata.useFocal = finitePositive(this.settings.focal) &&
+      finitePositive(this.settings.pixelSize);
+   if (finitePositive(this.settings.focal))
+      solver.metadata.focal = this.settings.focal;
+   if (finitePositive(this.settings.pixelSize))
+      solver.metadata.xpixsz = this.settings.pixelSize;
+   solver.metadata.resolution = finitePositive(this.settings.resolution)
+      ? this.settings.resolution
+      : this.settings.pixelSize / this.settings.focal * 0.18 / Math.PI;
+   solver.solverCfg.autoMagnitude = true;
+   solver.solverCfg.generateErrorImg = false;
+   solver.solverCfg.showStars = false;
+   if (typeof CatalogMode !== "undefined")
+      solver.solverCfg.catalogMode = CatalogMode.Automatic;
+
+   logLine("Running ImageSolver on " + view.fullId + " with metadata-derived seed values.");
+   solver.solveImage(window);
+   if (!imageHasAstrometricSolution(window))
+      throw new Error("ImageSolver completed without creating an astrometric solution.");
+   logLine("Plate solving completed successfully.");
+};
 
 function logLine(text)
 {
@@ -124,6 +255,8 @@ ProcessIconAdapter.prototype.execute = function(view)
       throw new Error(this.label + " did not complete successfully.");
 };
 
+var plateSolveSettings = new PlateSolveSettings;
+
 var adapters = {
    gradientCorrection: new ProcessAdapter(
       "gradientCorrection", "GradientCorrection", ["GradientCorrection"], function(p)
@@ -133,6 +266,8 @@ var adapters = {
 
    graxpert: new ProcessAdapter(
       "graxpert", "GraXpert", ["GraXpert", "GraXpertProcess"], function(p) {}),
+
+   plateSolve: new PlateSolveAdapter(plateSolveSettings),
 
    spcc: new ProcessAdapter(
       "spcc", "SpectrophotometricColorCalibration",
@@ -201,15 +336,18 @@ function defaultWorkflow()
       new WorkflowStep("gradient", "1. Gradient correction",
          ["gradientCorrection", "graxpert"], "gradientCorrection",
          "Runs before color calibration."),
-      new WorkflowStep("colorCalibration", "2. Color calibration",
+      new WorkflowStep("plateSolve", "2. Plate solve if needed",
+         ["plateSolve"], "plateSolve",
+         "Uses metadata-derived seed values and skips images that are already solved."),
+      new WorkflowStep("colorCalibration", "3. Color calibration",
          ["spcc"], "spcc", "SPCC requires a solved color image."),
-      new WorkflowStep("deconvolution", "3. Deblur / structure recovery",
+      new WorkflowStep("deconvolution", "4. Deblur / structure recovery",
          ["blurXTerminator", "syqonParallax"], "blurXTerminator",
          "Runs on linear data before the main denoise pass."),
-      new WorkflowStep("noiseReduction", "4. Noise reduction",
+      new WorkflowStep("noiseReduction", "5. Noise reduction",
          ["noiseXTerminator", "syqonPrism"], "noiseXTerminator",
          "Can run before separation or on the starless branch."),
-      new WorkflowStep("starSeparation", "5. Star separation",
+      new WorkflowStep("starSeparation", "6. Star separation",
          ["starXTerminator", "starNet2", "syqonStarless"], "starXTerminator",
          "Creates starless and stars-only workflow branches.")
    ];
@@ -354,20 +492,24 @@ PreflightValidator.prototype.validate = function()
    if (!anyEnabled)
       result.errors.push("Select at least one processing step.");
 
-   if (this.dialog.rows[1].enabled.checked &&
-       propertyExists(window, "hasAstrometricSolution") &&
-       !window.hasAstrometricSolution)
-      result.errors.push("SPCC requires an astrometric solution. Plate-solve the image first.");
+   var plateSolveRow = this.dialog.rowsById.plateSolve;
+   var spccRow = this.dialog.rowsById.colorCalibration;
+   var alreadySolved = imageHasAstrometricSolution(window);
+   if (plateSolveRow.enabled.checked && !alreadySolved && !plateSolveSettings.complete())
+      result.errors.push("Plate Solve if needed: " + adapters.plateSolve.requirement());
+   if (spccRow.enabled.checked && !alreadySolved && !plateSolveRow.enabled.checked)
+      result.errors.push("SPCC requires an astrometric solution. Enable Plate Solve if needed or solve the image first.");
 
-   var separationEnabled = this.dialog.rows[4].enabled.checked;
+   var separationEnabled = this.dialog.rowsById.starSeparation.enabled.checked;
    if (this.dialog.noisePlacement.currentItem === 1 &&
-       this.dialog.rows[3].enabled.checked && !separationEnabled)
+       this.dialog.rowsById.noiseReduction.enabled.checked && !separationEnabled)
       result.errors.push("Starless-branch denoise requires star separation.");
    if ((this.dialog.starlessStretch.currentItem > 0 ||
         this.dialog.starsStretch.currentItem > 0 ||
         this.dialog.recombine.checked) && !separationEnabled)
       result.errors.push("Branch stretching and recombination require star separation.");
-   if (!this.dialog.rows[2].enabled.checked && this.dialog.rows[3].enabled.checked &&
+   if (!this.dialog.rowsById.deconvolution.enabled.checked &&
+       this.dialog.rowsById.noiseReduction.enabled.checked &&
        this.dialog.noisePlacement.currentItem === 0)
       result.warnings.push("Noise reduction is enabled before separation without a deblur step. " +
          "Use this only if deconvolution was already completed.");
@@ -385,6 +527,144 @@ function resultText(result)
       text += "\n\nWarnings:\n- " + result.warnings.join("\n- ");
    return text;
 }
+
+function PlateSolveSetupDialog(settings)
+{
+   this.__base__ = Dialog;
+   this.__base__();
+   this.windowTitle = "Plate Solve Setup";
+   this.minWidth = 620;
+   var original = {
+      ra: settings.ra,
+      dec: settings.dec,
+      focal: settings.focal,
+      pixelSize: settings.pixelSize,
+      resolution: settings.resolution,
+      source: settings.source
+   };
+
+   this.help = new Label(this);
+   this.help.wordWrapping = true;
+   this.help.text = "Seed values are read from the active image's FITS/XISF metadata. " +
+      "Right ascension is expressed in degrees (0 to 360), resolution in degrees per pixel. " +
+      "ImageSolver uses its automatic catalog and magnitude selection.";
+
+   function editRow(parent, caption, value, tip)
+   {
+      var row = {};
+      row.label = new Label(parent);
+      row.label.text = caption;
+      row.label.minWidth = 190;
+      row.label.textAlignment = TextAlign_Right | TextAlign_VertCenter;
+      row.edit = new Edit(parent);
+      row.edit.text = value;
+      row.edit.toolTip = tip;
+      row.sizer = new HorizontalSizer;
+      row.sizer.spacing = 8;
+      row.sizer.add(row.label);
+      row.sizer.add(row.edit, 100);
+      return row;
+   }
+
+   this.raRow = editRow(this, "Approximate RA (degrees):", formatNumber(settings.ra, 7),
+      "Right ascension of the image center, 0 to 360 degrees.");
+   this.decRow = editRow(this, "Approximate Dec (degrees):", formatNumber(settings.dec, 7),
+      "Declination of the image center, -90 to +90 degrees.");
+   this.focalRow = editRow(this, "Focal length (mm):", formatNumber(settings.focal, 3),
+      "Effective focal length in millimeters.");
+   this.pixelRow = editRow(this, "Pixel size (micrometers):", formatNumber(settings.pixelSize, 4),
+      "Effective pixel size after binning or drizzle scaling.");
+   this.resolutionRow = editRow(this, "Resolution (degrees/pixel):",
+      formatNumber(settings.resolution, 9),
+      "Optional image scale. When present, this takes precedence over focal length and pixel size.");
+
+   this.sourceLabel = new Label(this);
+   this.sourceLabel.frameStyle = FrameStyle_Box;
+   this.sourceLabel.margin = 5;
+   this.sourceLabel.text = "Source: " + settings.source;
+
+   this.autofillButton = new PushButton(this);
+   this.autofillButton.text = "Autofill from Active Image";
+   this.okButton = new PushButton(this);
+   this.okButton.text = "Save Setup";
+   this.okButton.defaultButton = true;
+   this.cancelButton = new PushButton(this);
+   this.cancelButton.text = "Cancel";
+
+   this.buttonSizer = new HorizontalSizer;
+   this.buttonSizer.spacing = 8;
+   this.buttonSizer.add(this.autofillButton);
+   this.buttonSizer.addStretch();
+   this.buttonSizer.add(this.okButton);
+   this.buttonSizer.add(this.cancelButton);
+
+   this.sizer = new VerticalSizer;
+   this.sizer.margin = 10;
+   this.sizer.spacing = 8;
+   this.sizer.add(this.help);
+   this.sizer.add(this.raRow.sizer);
+   this.sizer.add(this.decRow.sizer);
+   this.sizer.add(this.focalRow.sizer);
+   this.sizer.add(this.pixelRow.sizer);
+   this.sizer.add(this.resolutionRow.sizer);
+   this.sizer.add(this.sourceLabel);
+   this.sizer.add(this.buttonSizer);
+
+   var self = this;
+   this.loadSettings = function()
+   {
+      self.raRow.edit.text = formatNumber(settings.ra, 7);
+      self.decRow.edit.text = formatNumber(settings.dec, 7);
+      self.focalRow.edit.text = formatNumber(settings.focal, 3);
+      self.pixelRow.edit.text = formatNumber(settings.pixelSize, 4);
+      self.resolutionRow.edit.text = formatNumber(settings.resolution, 9);
+      self.sourceLabel.text = "Source: " + settings.source;
+   };
+   this.saveSettings = function()
+   {
+      settings.ra = parseOptionalNumber(self.raRow.edit.text);
+      settings.dec = parseOptionalNumber(self.decRow.edit.text);
+      settings.focal = parseOptionalNumber(self.focalRow.edit.text);
+      settings.pixelSize = parseOptionalNumber(self.pixelRow.edit.text);
+      settings.resolution = parseOptionalNumber(self.resolutionRow.edit.text);
+      settings.source = "Reviewed in Plate Solve Setup";
+      if (!settings.complete())
+         throw new Error("Enter valid RA and Dec plus either resolution or both focal length and pixel size.");
+   };
+   this.autofillButton.onClick = function()
+   {
+      try
+      {
+         settings.autofill(ImageWindow.activeWindow);
+         self.loadSettings();
+      }
+      catch (e)
+      {
+         (new MessageBox(e.message, "Plate Solve Setup", StdIcon_Error, StdButton_Ok)).execute();
+      }
+   };
+   this.okButton.onClick = function()
+   {
+      try { self.saveSettings(); self.ok(); }
+      catch (e)
+      {
+         (new MessageBox(e.message, "Plate Solve Setup", StdIcon_Error, StdButton_Ok)).execute();
+      }
+   };
+   this.cancelButton.onClick = function()
+   {
+      settings.ra = original.ra;
+      settings.dec = original.dec;
+      settings.focal = original.focal;
+      settings.pixelSize = original.pixelSize;
+      settings.resolution = original.resolution;
+      settings.source = original.source;
+      self.cancel();
+   };
+   this.adjustToContents();
+}
+
+PlateSolveSetupDialog.prototype = new Dialog;
 
 function WorkflowRow(parent, step)
 {
@@ -406,19 +686,40 @@ function WorkflowRow(parent, step)
    this.status = new Label(parent);
    this.status.minWidth = 110;
    this.status.textAlignment = TextAlign_Right | TextAlign_VertCenter;
+   this.setup = null;
+   if (step.id === "plateSolve")
+   {
+      this.setup = new PushButton(parent);
+      this.setup.text = "Setup...";
+      this.setup.toolTip = "Review metadata-derived ImageSolver seed values.";
+   }
    this.adapterId = function() { return this.step.adapterIds[this.choice.currentItem]; };
    this.refreshStatus = function()
    {
-      this.status.text = adapters[this.adapterId()].available() ? "Available" : "Setup needed";
+      if (this.step.id === "plateSolve" && imageHasAstrometricSolution(ImageWindow.activeWindow))
+         this.status.text = "Already solved";
+      else if (this.step.id === "plateSolve")
+         this.status.text = adapters.plateSolve.available() && plateSolveSettings.complete()
+            ? "Ready" : "Setup needed";
+      else
+         this.status.text = adapters[this.adapterId()].available() ? "Available" : "Setup needed";
    };
    this.sizer = new HorizontalSizer;
    this.sizer.spacing = 8;
    this.sizer.add(this.enabled, 100);
    this.sizer.add(this.choice);
+   if (this.setup !== null)
+      this.sizer.add(this.setup);
    this.sizer.add(this.status);
    this.refreshStatus();
    var self = this;
    this.choice.onItemSelected = function() { self.refreshStatus(); };
+   if (this.setup !== null)
+      this.setup.onClick = function()
+      {
+         (new PlateSolveSetupDialog(plateSolveSettings)).execute();
+         self.refreshStatus();
+      };
 }
 
 function labeledCombo(parent, label, items, selected)
@@ -452,8 +753,9 @@ function WorkflowDialog()
    this.title.text = "<b>OSC Post-Processing Workflow v" + VERSION + "</b>";
    this.help = new Label(this);
    this.help.wordWrapping = true;
-   this.help.text = "Choose the desired tools and whether the main denoise pass runs before " +
-      "star separation or on the starless branch. SyQon choices use configured process icons.";
+   this.help.text = "Choose the desired tools. Plate Solve if needed uses metadata-derived " +
+      "seed values and skips an image that already has an astrometric solution. " +
+      "SyQon choices use configured process icons.";
    this.inputLabel = new Label(this);
    this.inputLabel.frameStyle = FrameStyle_Box;
    this.inputLabel.margin = 6;
@@ -468,11 +770,17 @@ function WorkflowDialog()
    this.stepsBox.sizer.margin = 8;
    this.stepsBox.sizer.spacing = 6;
    this.rows = [];
+   this.rowsById = {};
+   if (!ImageWindow.activeWindow.isNull &&
+       !imageHasAstrometricSolution(ImageWindow.activeWindow))
+      try { plateSolveSettings.autofill(ImageWindow.activeWindow); }
+      catch (e) { logLine("Plate-solve metadata autofill needs review: " + e.message); }
    var workflow = defaultWorkflow();
    for (var i = 0; i < workflow.length; ++i)
    {
       var row = new WorkflowRow(this, workflow[i]);
       this.rows.push(row);
+      this.rowsById[workflow[i].id] = row;
       this.stepsBox.sizer.add(row.sizer);
    }
 
@@ -566,21 +874,27 @@ function WorkflowDialog()
       try
       {
          var view = ImageWindow.activeWindow.currentView;
-         for (var i = 0; i <= 2; ++i)
-            if (self.rows[i].enabled.checked)
-               adapters[self.rows[i].adapterId()].execute(view);
+         var linearOrder = ["gradient", "plateSolve", "colorCalibration", "deconvolution"];
+         for (var i = 0; i < linearOrder.length; ++i)
+         {
+            var linearRow = self.rowsById[linearOrder[i]];
+            if (linearRow.enabled.checked)
+               adapters[linearRow.adapterId()].execute(view);
+         }
 
-         if (self.rows[3].enabled.checked && self.noisePlacement.currentItem === 0)
-            adapters[self.rows[3].adapterId()].execute(view);
+         var noiseRow = self.rowsById.noiseReduction;
+         var separationRow = self.rowsById.starSeparation;
+         if (noiseRow.enabled.checked && self.noisePlacement.currentItem === 0)
+            adapters[noiseRow.adapterId()].execute(view);
 
          var branches = null;
-         if (self.rows[4].enabled.checked)
-            branches = executeStarSeparation(adapters[self.rows[4].adapterId()], view);
+         if (separationRow.enabled.checked)
+            branches = executeStarSeparation(adapters[separationRow.adapterId()], view);
 
          if (branches !== null)
          {
-            if (self.rows[3].enabled.checked && self.noisePlacement.currentItem === 1)
-               adapters[self.rows[3].adapterId()].execute(branches.starlessView);
+            if (noiseRow.enabled.checked && self.noisePlacement.currentItem === 1)
+               adapters[noiseRow.adapterId()].execute(branches.starlessView);
             var nonlinear = false;
             if (self.starlessStretch.currentItem > 0)
             {
