@@ -5,7 +5,7 @@
  * Copyright (c) 2026 Chuck Faranda / CCDASTRO, Inc.
  */
 
-#feature-id    Utilities > CCDASTRO Workflow Manager
+#feature-id    CCDASTRO > Workflow Manager
 #feature-info  Configurable OSC post-processing workflow for integrated linear masters.
 
 #include <pjsr/StdButton.jsh>

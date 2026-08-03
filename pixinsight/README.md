@@ -49,7 +49,7 @@ The preflight validator reports unavailable process classes before execution.
 6. Select the repository's `pixinsight` directory.
 7. Enable recursive search if PixInsight offers that option, then allow the
    feature scan to finish.
-8. Open **Script > Utilities > CCDASTRO Workflow Manager**.
+8. Open **Script > CCDASTRO > Workflow Manager**.
 
 If the script does not appear, remove and re-add the search path, then inspect
 the PixInsight Process Console for a script parsing or signature message.
@@ -74,7 +74,7 @@ pages instead of copying an old URL from a workflow file.
 2. If using SPCC, plate-solve it first and make sure acquisition metadata is
    correct.
 3. Select the master image's main view. Do not select a preview.
-4. Launch **CCDASTRO Workflow Manager**.
+4. Launch **Script > CCDASTRO > Workflow Manager**.
 5. Check the desired stages and choose GradientCorrection or GraXpert.
 6. Confirm that the input is an unstretched linear OSC/RGB master.
 7. Click **Validate** and resolve every reported error.
