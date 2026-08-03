@@ -1,9 +1,9 @@
 {
   "$schema": "./osc-linear-mvp.schema.json",
   "schemaVersion": 2,
-  "id": "osc-linear-v0.3",
-  "name": "OSC Linear and Starless Workflow v0.3",
-  "description": "Post-integration workflow with selectable SyQon tools and starless/stars branches.",
+  "id": "osc-linear-v0.4",
+  "name": "OSC Linear, Plate-Solved, and Starless Workflow v0.4",
+  "description": "Post-integration workflow with metadata-assisted plate solving, selectable tools, and starless/stars branches.",
   "input": {
     "stage": "linear-integrated",
     "colorModel": "OSC-RGB",
@@ -23,12 +23,32 @@
         { "id": "graxpert", "kind": "process", "processClass": "GraXpert" }
       ],
       "requires": ["linear", "rgb"],
-      "mustPrecede": ["colorCalibration", "deconvolution", "noiseReduction", "starSeparation"],
+      "mustPrecede": ["plateSolve", "colorCalibration", "deconvolution", "noiseReduction", "starSeparation"],
       "parameters": {}
     },
     {
-      "id": "colorCalibration",
+      "id": "plateSolve",
       "order": 20,
+      "enabled": true,
+      "stage": "linear",
+      "lane": "main",
+      "selectedAdapter": "imageSolver",
+      "adapters": [
+        { "id": "imageSolver", "kind": "internal" }
+      ],
+      "requires": ["linear", "rgb", "approximateCoordinates", "imageScale"],
+      "mustFollow": ["gradient"],
+      "mustPrecede": ["colorCalibration"],
+      "parameters": {
+        "onlyIfNeeded": true,
+        "metadataAutofill": true,
+        "catalogMode": "automatic",
+        "autoLimitMagnitude": true
+      }
+    },
+    {
+      "id": "colorCalibration",
+      "order": 30,
       "enabled": true,
       "stage": "linear",
       "lane": "main",
@@ -37,13 +57,13 @@
         { "id": "spcc", "kind": "process", "processClass": "SpectrophotometricColorCalibration" }
       ],
       "requires": ["linear", "rgb", "astrometricSolution"],
-      "mustFollow": ["gradient"],
+      "mustFollow": ["gradient", "plateSolve"],
       "mustPrecede": ["deconvolution", "noiseReduction", "starSeparation"],
       "parameters": { "catalogId": "GaiaDR3SP", "autoLimitMagnitude": true }
     },
     {
       "id": "deconvolution",
-      "order": 30,
+      "order": 40,
       "enabled": true,
       "stage": "linear",
       "lane": "main",
@@ -59,7 +79,7 @@
     },
     {
       "id": "noiseReduction",
-      "order": 40,
+      "order": 50,
       "enabled": true,
       "stage": "branch",
       "lane": "starless",
@@ -74,7 +94,7 @@
     },
     {
       "id": "starSeparation",
-      "order": 50,
+      "order": 60,
       "enabled": true,
       "stage": "linear",
       "lane": "main",
@@ -90,7 +110,7 @@
     },
     {
       "id": "starlessStretch",
-      "order": 60,
+      "order": 70,
       "enabled": true,
       "stage": "nonlinear",
       "lane": "starless",
@@ -104,7 +124,7 @@
     },
     {
       "id": "starsStretch",
-      "order": 70,
+      "order": 80,
       "enabled": true,
       "stage": "nonlinear",
       "lane": "stars",
@@ -118,7 +138,7 @@
     },
     {
       "id": "recombine",
-      "order": 80,
+      "order": 90,
       "enabled": true,
       "stage": "nonlinear",
       "lane": "main",

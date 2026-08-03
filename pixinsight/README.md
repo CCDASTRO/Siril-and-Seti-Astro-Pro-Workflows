@@ -1,12 +1,14 @@
-# CCDASTRO PixInsight Workflow Manager v0.3
+# CCDASTRO PixInsight Workflow Manager v0.4
 
 This directory contains a native PixInsight JavaScript Runtime (PJSR) workflow
 manager for an integrated linear OSC/RGB master.
 
-## v0.3 capabilities
+## v0.4 capabilities
 
 - Ordered checkboxes for gradient correction, SPCC, deblur, denoise, and star
   separation.
+- Optional **Plate Solve if needed** step before SPCC, with a dedicated setup
+  dialog and automatic seed-value extraction from FITS/XISF metadata.
 - GradientCorrection or GraXpert.
 - BlurXTerminator or SyQon Parallax.
 - NoiseXTerminator or SyQon Prism/DeepPrism.
@@ -22,26 +24,54 @@ manager for an integrated linear OSC/RGB master.
 The default order is:
 
 1. GradientCorrection or GraXpert
-2. SpectrophotometricColorCalibration (SPCC)
-3. BlurXTerminator or SyQon Parallax
-4. StarXTerminator, StarNet2, or SyQon Starless
-5. NoiseXTerminator or SyQon Prism on the starless branch
-6. Independent starless and stars stretches
-7. PixelMath screen recombination
+2. ImageSolver when the image does not already have an astrometric solution
+3. SpectrophotometricColorCalibration (SPCC)
+4. BlurXTerminator or SyQon Parallax
+5. StarXTerminator, StarNet2, or SyQon Starless
+6. NoiseXTerminator or SyQon Prism on the starless branch
+7. Independent starless and stars stretches
+8. PixelMath screen recombination
 
 Deblur runs before the main denoise pass. Gradient correction precedes SPCC,
 and SPCC requires a plate-solved image.
 
 ## Requirements
 
-- PixInsight 1.8.9-2 or newer; use the newest supported build when possible.
+- PixInsight 1.9.4 or newer, including the standard ImageSolver script.
 - An integrated, unstretched OSC/RGB master, preferably 32-bit floating-point
   XISF.
-- A valid astrometric solution when SPCC is selected.
+- For SPCC, either an existing astrometric solution or approximate coordinates
+  and image-scale metadata for the Plate Solve adapter.
 - The selected third-party processes, applications, models, and licenses.
 
 The preflight validator reports unavailable process classes and missing SyQon
 process icons before execution.
+
+## Configure Plate Solve if needed
+
+The workflow enables **Plate Solve if needed** by default. When the active image
+already has an astrometric solution, the adapter preserves it and continues to
+SPCC without solving again.
+
+For an unsolved image, the manager initializes PixInsight ImageSolver and reads
+the approximate center coordinates, focal length, pixel size, and image
+resolution from available FITS/XISF metadata. The status shows **Ready** when
+the metadata contains enough information.
+
+If the status shows **Setup needed**:
+
+1. Select the integrated linear master as the active image.
+2. Click **Setup...** beside **Plate Solve if needed**.
+3. Click **Autofill from Active Image**.
+4. Review or enter RA and Dec in degrees.
+5. Provide either image resolution in degrees per pixel, or both focal length
+   in millimeters and effective pixel size in micrometers.
+6. Click **Save Setup**, then **Validate**.
+
+The adapter uses ImageSolver's automatic catalog and magnitude selection. It
+must create a valid astrometric solution before SPCC can run. Approximate
+coordinates must be reasonably close to the image center; the setup dialog is
+not a blind-solve service.
 
 ## Install with PixInsight Update Manager
 
@@ -60,17 +90,18 @@ process icons before execution.
 ## Install manually as a Feature Script
 
 1. Download or clone this repository.
-2. Keep the complete `pixinsight` directory in a permanent location.
-3. Start PixInsight.
-4. Choose **Script > Feature Scripts**.
-5. Click **Add**.
-6. Select the repository's `pixinsight` directory.
-7. Enable recursive search if available and allow the feature scan to finish.
-8. Open **Script > CCDASTRO > Workflow Manager**.
+2. Locate PixInsight's installed `src/scripts` directory.
+3. Create `src/scripts/CCDASTRO` and copy `CCDASTROWorkflowManager.js` into it.
+   This sibling location is required because v0.4 uses PixInsight's installed
+   `src/scripts/ImageSolver` library.
+4. Start PixInsight and choose **Script > Feature Scripts**.
+5. Click **Add** and select the new `src/scripts/CCDASTRO` directory.
+6. Enable recursive search if available and allow the feature scan to finish.
+7. Open **Script > CCDASTRO > Workflow Manager**.
 
 The GitHub `tree/main/pixinsight` webpage is not an update URL. Use the raw
-`updates/` URL above for Update Manager or select the local directory for a
-manual Feature Scripts installation.
+`updates/` URL above for Update Manager or use the installed scripts directory
+for a manual Feature Scripts installation.
 
 ## Configure SyQon choices
 
@@ -104,10 +135,12 @@ view was created before continuing.
 ## Run a workflow
 
 1. Open and select the integrated linear master main view.
-2. Plate-solve it first if SPCC is enabled.
-3. Launch **Script > CCDASTRO > Workflow Manager**.
-4. Select the desired tool in each enabled stage.
-5. Choose whether denoise runs before separation or on the starless branch.
+2. Launch **Script > CCDASTRO > Workflow Manager**.
+3. Leave **Plate Solve if needed** enabled when SPCC is selected.
+4. If its status says **Setup needed**, open **Setup...** and review the
+   metadata-derived values.
+5. Select the desired tool in each remaining enabled stage.
+6. Choose whether denoise runs before separation or on the starless branch.
 6. Choose the starless and stars stretch options.
 7. Enable automatic recombination if desired.
 8. Confirm that the input is an unstretched integrated linear OSC/RGB master.
@@ -166,8 +199,9 @@ PixInsight, reopen the manager, and click Validate.
 **A SyQon choice says Setup needed.** Create the required process icon with the
 exact name listed above. Confirm that the icon runs successfully by itself.
 
-**SPCC preflight fails.** Run ImageSolver and confirm coordinates, focal length,
-pixel size, and observation metadata.
+**Plate Solve says Setup needed or SPCC preflight fails.** Open **Setup...**, use
+metadata autofill, and confirm coordinates plus resolution or focal length and
+pixel size. Alternatively, run ImageSolver manually and reopen the manager.
 
 **No stars-only view is detected.** Configure the selected star-removal tool to
 generate stars. For SyQon Starless, use Subtraction and rename its process icon
